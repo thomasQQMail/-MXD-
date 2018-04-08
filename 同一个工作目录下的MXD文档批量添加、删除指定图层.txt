@@ -1,0 +1,20 @@
+#同一个工作目录下的MXD文档批量添加、删除指定图层（.lyr）__________________________________亲测可行￥￥￥
+#
+
+# coding=gbk
+import arcpy.mapping as mapping,os
+#空间目录
+for root,dirs,files in os.walk(r"D:\ALL_ARCGIS_RELATED\ALL_MXD"):
+ 	for name in files:
+ 		filename = os.path.join(root,name)
+ 		mxd =mapping.MapDocument(r"%s"%filename)
+		df = mapping.ListDataFrames(mxd)[0]
+		addlayer = mapping.Layer(r"H:\work\余杭区2017年影像\杭州2017影像图.lyr")
+#添加图层文件
+		mapping.AddLayer(df,addlayer,"BOTTOM")
+		for lyr in arcpy.mapping.ListLayers(mxd, "", df):
+#删除指定图层名称
+        		if lyr.name.encode("utf-8") == "湖州市行政区划":	#.encode("utf-8")解决编码报错
+				arcpy.mapping.RemoveLayer(df, lyr)
+#另存MXD文档
+		mxd.saveACopy(r"D:\ALL_ARCGIS_RELATED\0\%s"%name)
